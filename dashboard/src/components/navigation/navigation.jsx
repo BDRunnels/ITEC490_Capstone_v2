@@ -29,6 +29,7 @@ const Navigation = () => {
   const [hovered4, setHovered4] = useState(false);
   const [hovered5, setHovered5] = useState(false);
   const [hovered6, setHovered6] = useState(false);
+  const [hoveredSearch, setHoveredSearch] = useState(false);
   const [hoveredLogs, setHoveredLogs] = useState(false);
 
   // Button 1
@@ -60,6 +61,10 @@ const Navigation = () => {
     setHovered6(!hovered6);
   };
 
+  const handleHoverSearch = () => {
+    setHoveredSearch(!hoveredSearch);
+  };
+
 
   const buttonStyle1 = {
     backgroundColor: hovered1 ? 'white' : '',
@@ -89,6 +94,12 @@ const Navigation = () => {
     backgroundColor: hovered5 ? 'white' : '',
     color: hovered5 ? 'black' : 'white',
     borderColor: hovered5 ? 'black' : 'white'
+  };
+
+  const buttonStyleSearch = {
+    backgroundColor: hoveredSearch ? 'white' : '',
+    color: hoveredSearch ? 'black' : 'white',
+    borderColor: hoveredSearch ? 'black' : 'white'
   };
 
   const buttonStyle6 = {
@@ -170,6 +181,15 @@ const Navigation = () => {
                     </MDBBtn>
                 {/* </MDBNavbarLink> */}
                 </Link>
+              </MDBNavbarItem>
+              <MDBNavbarItem>
+                {/* <MDBNavbarLink active aria-current='page' href='/search'> */}
+                <Link to='/search' className='nav-link' onClick={() => setIsOpen(false)}>
+                    <MDBBtn  outline color='white' onMouseEnter={handleHoverSearch} onMouseLeave={handleHoverSearch} style={buttonStyleSearch} type='button'>
+                        <i className="fas fa-search me-2"></i>SEARCH
+                    </MDBBtn>
+                </Link>
+                {/* </MDBNavbarLink> */}
               </MDBNavbarItem>
               <MDBNavbarItem>
                 <Link to='/admin' className='nav-link' onClick={() => setIsOpen(false)}>

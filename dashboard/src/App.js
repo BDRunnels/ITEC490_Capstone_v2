@@ -13,6 +13,7 @@ import Computers from "./components/computers/computers";
 import Logs from "./components/logs/logs";
 import Scripts from "./components/scripts/scripts";
 import About from "./components/about/about";
+import SearchPage from "./components/search/SearchPage";
 
 import Admin from "./components/admin/admin";
 
@@ -31,6 +32,7 @@ const App = () => {
                 <Route path='/' element={<Home />} />
                 <Route path='/computers' element={<Computers />} />
                 <Route path='/logs' element={<Logs />} />
+                <Route path='/search' element={<SearchPage />} />
                 <Route path='/CVE' element={<CVE />} />
                 <Route path='/scripts' element={<Scripts />} />
                 <Route path='/about' element={<About />} />
