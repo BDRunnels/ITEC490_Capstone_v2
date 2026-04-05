@@ -244,21 +244,6 @@ export default function SearchPage() {
                         >
                             ⚠️ Warnings
                         </button>
-                        <button
-                            onClick={() => runPrefetchSearch("*", "security")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#6c757d",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Recent security events"
-                        >
-                            📋 Recent Security
-                        </button>
                     </div>
                 </div>
             )}
