@@ -1,0 +1,38 @@
+body.dark-mode {
+    background-color: black;
+    color: white;
+    margin-top: 7vh;
+    overflow: scroll;
+}
+
+body.light-mode {
+    background-color: white;
+    color: black;
+    margin-top: 7vh;
+    overflow: scroll;
+}
+
+.cve-card {
+    transition: box-shadow 0.2s ease;
+}
+
+.cve-card:hover {
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+}
+
+.container {
+    border: 2px solid white;
+}
+
+.d-sm-grid {
+    max-width: 768px;
+}
+
+.img-thumbnail {
+    max-width: 10vw;
+    max-height: 5vh;
+}
+
+.bg-image {
+    background-color: black;
+}
