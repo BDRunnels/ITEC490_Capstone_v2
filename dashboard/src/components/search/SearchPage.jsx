@@ -53,6 +53,12 @@ export default function SearchPage() {
         }
     }
 
+    // Prefetch search functions for common admin queries
+    const runPrefetchSearch = (searchQuery, searchTable) => {
+        setQuery(searchQuery);
+        setTable(searchTable);
+    };
+
     return (
         <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
             <h2>SIEM Search</h2>
@@ -75,6 +81,187 @@ export default function SearchPage() {
                     </p>
                 )}
             </div>
+
+            {/* Quick Search Buttons */}
+            {currentHost && (
+                <div style={{ marginBottom: "20px" }}>
+                    <h4 style={{ marginBottom: "10px", color: "#333" }}>Quick Searches</h4>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                        {/* Security Events */}
+                        <button
+                            onClick={() => runPrefetchSearch("4625", "security")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Failed login attempts"
+                        >
+                            🔐 Failed Logins
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("4624", "security")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#28a745",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Successful login events"
+                        >
+                            ✅ Successful Logins
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("4740", "security")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#ffc107",
+                                color: "black",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Account lockout events"
+                        >
+                            🔒 Account Lockouts
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("4720 OR 4722 OR 4724 OR 4738", "security")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#6f42c1",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="User account management events"
+                        >
+                            👤 Account Changes
+                        </button>
+
+                        {/* System Events */}
+                        <button
+                            onClick={() => runPrefetchSearch("7031 OR 7034", "system")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#fd7e14",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Service start/stop failures"
+                        >
+                            ⚙️ Service Failures
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("error", "system")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="System error events"
+                        >
+                            ❌ System Errors
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("12 OR 13", "system")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#20c997",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="System startup and shutdown events"
+                        >
+                            🔄 System Start/Stop
+                        </button>
+
+                        {/* Defender Events */}
+                        <button
+                            onClick={() => runPrefetchSearch("threat", "defender")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#e83e8c",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Windows Defender threat detections"
+                        >
+                            🛡️ Defender Threats
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("scan", "defender")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#17a2b8",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Defender scan results"
+                        >
+                            🔍 Scan Results
+                        </button>
+
+                        {/* General Searches */}
+                        <button
+                            onClick={() => runPrefetchSearch("warning", "system")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#ffc107",
+                                color: "black",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="System warning events"
+                        >
+                            ⚠️ Warnings
+                        </button>
+                        <button
+                            onClick={() => runPrefetchSearch("*", "security")}
+                            style={{
+                                padding: "8px 12px",
+                                backgroundColor: "#6c757d",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px"
+                            }}
+                            title="Recent security events"
+                        >
+                            📋 Recent Security
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Search Controls */}
             <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
