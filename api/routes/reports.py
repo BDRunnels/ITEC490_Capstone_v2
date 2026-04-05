@@ -73,12 +73,13 @@ def get_reports():
 
 # =========================================================
 #   GET /api/search
-#   Single-table keyword search
+#   Single-table keyword search (with optional hostname filter)
 # =========================================================
 @search_bp.get("/api/search")
 def search_logs():
     table_key = request.args.get("table")
     keyword = request.args.get("q", "").strip()
+    hostname = request.args.get("hostname", "").strip()  # NEW: hostname filter
     limit = int(request.args.get("limit", 200))
     offset = int(request.args.get("offset", 0))
 
@@ -91,55 +92,99 @@ def search_logs():
     db = get_db()
     table = LOG_TABLES[table_key]
 
-    # ---------------------------------------------
+    # ---------------------------------------------------
     # Hardware logs: no FTS
-    # ---------------------------------------------
+    # ---------------------------------------------------
     if table_key == "hardware":
+        where_clause = "WHERE message LIKE ?"
+        params = [f"%{keyword}%"]
+        
+        if hostname:
+            where_clause += " AND hostname = ?"
+            params.append(hostname)
+        
         rows = db.execute(
             f"""
             SELECT *
             FROM {table}
-            WHERE message LIKE ?
+            {where_clause}
             ORDER BY timestamp DESC
             LIMIT ? OFFSET ?
             """,
-            (f"%{keyword}%", limit, offset)
+            (*params, limit, offset)
         ).fetchall()
 
         return jsonify({
             "table": table_key,
             "query": keyword,
+            "hostname": hostname or None,
             "count": len(rows),
             "results": [dict(r) for r in rows]
         })
 
-    # ---------------------------------------------
-    # FTS path
-    # ---------------------------------------------
+    # ---------------------------------------------------
+    # FTS path (security, system, defender, agent)
+    # ---------------------------------------------------
     fts_table = FTS_TABLES[table_key]
+    
+    if hostname:
+        # First get matching rowids from FTS
+        fts_rows = db.execute(
+            f"""
+            SELECT rowid
+            FROM {fts_table}
+            WHERE {fts_table} MATCH ?
+            LIMIT ? OFFSET ?
+            """,
+            (keyword, limit, offset)
+        ).fetchall()
 
-    fts_rows = db.execute(
-        f"""
-        SELECT rowid
-        FROM {fts_table}
-        WHERE {fts_table} MATCH ?
-        LIMIT ? OFFSET ?
-        """,
-        (keyword, limit, offset)
-    ).fetchall()
+        rowids = [r["rowid"] for r in fts_rows]
 
-    rowids = [r["rowid"] for r in fts_rows]
+        if not rowids:
+            return jsonify({
+                "table": table_key,
+                "query": keyword,
+                "hostname": hostname,
+                "count": 0,
+                "results": []
+            })
 
-    if not rowids:
-        return jsonify({"table": table_key, "query": keyword, "count": 0, "results": []})
+        # Then fetch full rows and filter by hostname
+        placeholders = ",".join("?" for _ in rowids)
+        sql = f"SELECT * FROM {table} WHERE id IN ({placeholders}) AND hostname = ? ORDER BY timestamp DESC"
+        full_rows = db.execute(sql, (*rowids, hostname)).fetchall()
+    else:
+        # No hostname filter
+        fts_rows = db.execute(
+            f"""
+            SELECT rowid
+            FROM {fts_table}
+            WHERE {fts_table} MATCH ?
+            LIMIT ? OFFSET ?
+            """,
+            (keyword, limit, offset)
+        ).fetchall()
 
-    placeholders = ",".join("?" for _ in rowids)
-    sql = f"SELECT * FROM {table} WHERE id IN ({placeholders}) ORDER BY timestamp DESC"
-    full_rows = db.execute(sql, rowids).fetchall()
+        rowids = [r["rowid"] for r in fts_rows]
+
+        if not rowids:
+            return jsonify({
+                "table": table_key,
+                "query": keyword,
+                "hostname": None,
+                "count": 0,
+                "results": []
+            })
+
+        placeholders = ",".join("?" for _ in rowids)
+        sql = f"SELECT * FROM {table} WHERE id IN ({placeholders}) ORDER BY timestamp DESC"
+        full_rows = db.execute(sql, rowids).fetchall()
 
     return jsonify({
         "table": table_key,
         "query": keyword,
+        "hostname": hostname or None,
         "count": len(full_rows),
         "results": [dict(r) for r in full_rows]
     })

@@ -2,11 +2,12 @@
 
 const API = "/api";
 
-// -----------------------------
-// Single-table search
-// -----------------------------
-export async function searchTable(table, query, limit = 200, offset = 0) {
-    const url = `${API}/search?table=${table}&q=${encodeURIComponent(query)}&limit=${limit}&offset=${offset}`;
+// Single-table search (with optional hostname filter)
+export async function searchTable(table, query, hostname = null, limit = 200, offset = 0) {
+    let url = `${API}/search?table=${table}&q=${encodeURIComponent(query)}&limit=${limit}&offset=${offset}`;
+    if (hostname) {
+        url += `&hostname=${encodeURIComponent(hostname)}`;
+    }
     const res = await fetch(url);
     return res.json();
 }
