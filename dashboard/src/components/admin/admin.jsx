@@ -187,24 +187,11 @@ const Admin = () => {
   const downloadKillScript = () => {
     window.location.href = `${downloadBase}/api/generate-kill-script?host=${window.location.hostname}`;
   };
-  const [password, setPassword] = useState("");
-  const [isUnlocked, setIsUnlocked] = useState(false);
   const [error, setError] = useState(null);
   const [statusMsg, setStatusMsg] = useState(null);
   const [isWiping, setIsWiping] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isUnseeding, setIsUnseeding] = useState(false);
-  
-  
-  const handleUnlock = (e) => {
-    e.preventDefault();
-    if (password === "admin") {
-      setIsUnlocked(true);
-      setError(null);
-    } else {
-      setError("Incorrect administrator password.");
-    }
-  };
 
   const handleWipeDatabase = async () => {
     if (!window.confirm("WARNING: This will permanently purge all hardware, security, system, defender, and agent logs from the database. It cannot be undone. Are you sure?")) {
@@ -219,7 +206,7 @@ const Admin = () => {
       const response = await fetch(`${apiBase}/api/wipe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password })
+        body: JSON.stringify({})
       });
       
       const data = await response.json();
@@ -244,7 +231,7 @@ const Admin = () => {
       const response = await fetch(`${apiBase}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password })
+        body: JSON.stringify({})
       });
       const data = await response.json();
       if (!response.ok || data.status === "error") throw new Error(data.message || `Failed to ${actionName}`);
@@ -316,10 +303,6 @@ const Admin = () => {
                     </div>
                  </div>
                </div>
-
-               <button className="btn btn-secondary mt-4" onClick={() => {setIsUnlocked(false); setPassword(""); setStatusMsg(null);}}>
-                 <i className="fas fa-sign-out-alt me-2"></i> Lock Terminal
-               </button>
 
              </div>
           

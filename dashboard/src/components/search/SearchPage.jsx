@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { HostContext } from "../../context/HostContext";
+import { MDBAccordion, MDBAccordionItem } from 'mdb-react-ui-kit';
 import {
     searchTable,
     searchAll,
@@ -16,9 +17,21 @@ export default function SearchPage() {
     const [selected, setSelected] = useState(null);
     const [error, setError] = useState("");
 
-    // Run search whenever query, table, or currentHost changes
+    // Group results by hostname
+    const groupedResults = useMemo(() => {
+        const groups = {};
+        results.forEach(row => {
+            if (!groups[row.hostname]) {
+                groups[row.hostname] = [];
+            }
+            groups[row.hostname].push(row);
+        });
+        return groups;
+    }, [results]);
+
+    // Run search whenever query or table changes (hostname is optional)
     useEffect(() => {
-        if (!query || !currentHost) {  // Require both query AND selected host
+        if (!query) {
             setResults([]);
             return;
         }
@@ -26,8 +39,8 @@ export default function SearchPage() {
         setError("");
         setLoading(true);
 
-        // Single-table search with hostname filter
-        searchTable(table, query, currentHost)
+        // Search across all hosts if no currentHost, or filter by host if selected
+        searchTable(table, query, currentHost || null)
             .then(data => {
                 if (data.results) {
                     setResults(data.results);
@@ -67,26 +80,25 @@ export default function SearchPage() {
             <div style={{
                 marginBottom: "20px",
                 padding: "10px",
-                backgroundColor: currentHost ? "#e8f5e9" : "#ffebee",
-                border: `2px solid ${currentHost ? "#4caf50" : "#f44336"}`,
+                backgroundColor: currentHost ? "#e8f5e9" : "#e3f2fd",
+                border: `2px solid ${currentHost ? "#4caf50" : "#2196F3"}`,
                 borderRadius: "6px"
             }}>
                 {currentHost ? (
                     <p style={{ margin: 0, color: "#2e7d32", fontWeight: "bold" }}>
-                        ✓ Searching on: <strong>{currentHost}</strong>
+                        ✓ Filtering by: <strong>{currentHost}</strong> (Click "Computers" to change)
                     </p>
                 ) : (
-                    <p style={{ margin: 0, color: "#c62828", fontWeight: "bold" }}>
-                        ⚠ Please select a computer first (go to Computers page)
+                    <p style={{ margin: 0, color: "#1565c0", fontWeight: "bold" }}>
+                        🔍 Searching across ALL hosts (Select a computer to filter by host)
                     </p>
                 )}
             </div>
 
             {/* Quick Search Buttons */}
-            {currentHost && (
-                <div style={{ marginBottom: "20px" }}>
-                    <h4 style={{ marginBottom: "10px", color: "#333" }}>Quick Searches</h4>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            <div style={{ marginBottom: "20px" }}>
+                <h4 style={{ marginBottom: "10px", color: "#333" }}>Quick Searches</h4>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                         {/* Security Events */}
                         <button
                             onClick={() => runPrefetchSearch("4625", "security")}
@@ -246,32 +258,25 @@ export default function SearchPage() {
                         </button>
                     </div>
                 </div>
-            )}
 
             {/* Search Controls */}
             <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
                 <input
                     style={{
                         flex: 1,
-                        padding: "8px",
-                        opacity: currentHost ? 1 : 0.5,
-                        cursor: currentHost ? "text" : "not-allowed"
+                        padding: "8px"
                     }}
                     placeholder="Search logs…"
                     value={query}
                     onChange={e => setQuery(e.target.value)}
-                    disabled={!currentHost}  // Disable if no host selected
                 />
 
                 <select
                     value={table}
                     onChange={e => setTable(e.target.value)}
                     style={{
-                        padding: "8px",
-                        opacity: currentHost ? 1 : 0.5,
-                        cursor: currentHost ? "pointer" : "not-allowed"
+                        padding: "8px"
                     }}
-                    disabled={!currentHost}  // Disable if no host selected
                 >
                     <option value="security">Security</option>
                     <option value="system">System</option>
@@ -297,48 +302,62 @@ export default function SearchPage() {
             {loading && <p style={{ fontStyle: "italic", color: "#666" }}>Searching…</p>}
 
             {/* Results List */}
-            {!loading && results.length > 0 && currentHost && (
+            {!loading && results.length > 0 && (
                 <div style={{
                     border: "1px solid #ccc",
                     borderRadius: "6px",
                     overflow: "hidden"
                 }}>
                     <p style={{ padding: "10px", background: "#f5f5f5", margin: 0 }}>
-                        Found <strong>{results.length}</strong> result(s)
+                        Found <strong>{results.length}</strong> result(s) across <strong>{Object.keys(groupedResults).length}</strong> host(s)
                     </p>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead style={{ background: "#f0f0f0" }}>
-                            <tr>
-                                <th style={{ padding: "8px", textAlign: "left" }}>Timestamp</th>
-                                <th style={{ padding: "8px", textAlign: "left" }}>Hostname</th>
-                                <th style={{ padding: "8px", textAlign: "left" }}>Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {results.map(row => (
-                                <tr
-                                    key={row.id}
-                                    onClick={() => openDetail(row)}
-                                    style={{
-                                        cursor: "pointer",
-                                        borderBottom: "1px solid #eee"
-                                    }}
-                                >
-                                    <td style={{ padding: "8px" }}>{row.timestamp}</td>
-                                    <td style={{ padding: "8px" }}>{row.hostname}</td>
-                                    <td style={{ padding: "8px" }}>
-                                        {row.message?.slice(0, 120)}…
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                    <MDBAccordion initialActive={1}>
+                        {Object.entries(groupedResults).map(([hostname, hostResults], index) => (
+                            <MDBAccordionItem
+                                collapseId={index + 1}
+                                headerTitle={`${hostname} (${hostResults.length} result${hostResults.length !== 1 ? 's' : ''})`}
+                                key={hostname}
+                                className="mb-0"
+                            >
+                                <div style={{ padding: "10px" }}>
+                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                        <thead style={{ background: "#f9f9f9" }}>
+                                            <tr>
+                                                <th style={{ padding: "8px", textAlign: "left" }}>Timestamp</th>
+                                                <th style={{ padding: "8px", textAlign: "left" }}>Message</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {hostResults.map(row => (
+                                                <tr
+                                                    key={row.id}
+                                                    onClick={() => openDetail(row)}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        borderBottom: "1px solid #eee"
+                                                    }}
+                                                >
+                                                    <td style={{ padding: "8px" }}>{row.timestamp}</td>
+                                                    <td style={{ padding: "8px" }}>
+                                                        {row.message?.slice(0, 120)}…
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </MDBAccordionItem>
+                        ))}
+                    </MDBAccordion>
                 </div>
             )}
 
             {/* No results */}
-            {!loading && query && currentHost && results.length === 0 && (
-                <p style={{ color: "#999" }}>No results found for "{query}" on {currentHost}.</p>
+            {!loading && query && results.length === 0 && (
+                <p style={{ color: "#999" }}>
+                    No results found for "{query}" {currentHost ? `on ${currentHost}` : "across all hosts"}.
+                </p>
             )}
 
             {/* Detail Modal */}

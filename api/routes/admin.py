@@ -10,10 +10,6 @@ admin_bp = Blueprint("admin", __name__)
 # ---------------------------------------------------------
 @admin_bp.post("/api/wipe")
 def wipe():
-    data = request.get_json(silent=True) or {}
-    if data.get("password") != "admin":
-        return jsonify({"status": "error", "message": "Unauthorized"}), 401
-
     db = get_db()
     for table in ["hardware_logs", "security_logs", "system_logs", "defender_logs", "agent_logs"]:
         try:
@@ -54,10 +50,6 @@ DUMMY_HOSTS = ["DESKTOP-ALPHA", "SRV-BETA", "LAPTOP-GAMMA", "DC-DELTA"]
 
 @admin_bp.post("/api/seed")
 def seed_dummy_data():
-    data = request.get_json(silent=True) or {}
-    if data.get("password") != "admin":
-        return jsonify({"status": "error", "message": "Unauthorized"}), 401
-
     db = get_db()
     
     hosts = [
@@ -108,10 +100,6 @@ def seed_dummy_data():
 
 @admin_bp.post("/api/unseed")
 def unseed_dummy_data():
-    data = request.get_json(silent=True) or {}
-    if data.get("password") != "admin":
-        return jsonify({"status": "error", "message": "Unauthorized"}), 401
-
     db = get_db()
     for table in ["hardware_logs", "security_logs", "system_logs", "defender_logs", "agent_logs"]:
         for d_host in DUMMY_HOSTS:
