@@ -248,7 +248,7 @@ const Admin = () => {
       <h1 className="text-center mb-4">Admin</h1>
       
       <div className="container" style={{ maxWidth: '800px' }}>
-        <div className={`p-5 rounded shadow text-center ${theme === 'light-mode' ? 'bg-light border border-dark' : 'text-white'}`} style={theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}}>
+        <div className={`p-5 rounded text-center ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : 'text-white'}`} style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}>
              <div>             
                {statusMsg && <div className="alert alert-success">{statusMsg}</div>}
                {error && <div className="alert alert-danger">{error}</div>}

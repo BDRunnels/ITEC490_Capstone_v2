@@ -102,10 +102,6 @@ const Login = () => {
             <i className="fas fa-sign-in-alt me-2"></i>Sign In
           </button>
         </form>
-
-        <p style={{ color: '#555', fontSize: '0.75rem', marginTop: '24px' }}>
-          Authorized personnel only
-        </p>
       </div>
     </div>
   );

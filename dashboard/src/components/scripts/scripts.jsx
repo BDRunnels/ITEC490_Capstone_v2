@@ -102,7 +102,7 @@ New-NetFirewallRule -DisplayName "SIEM Block Ports ${portList} UDP" -Direction O
       <div style={{ marginTop: '20px' }}>
         <h1 className="text-center mb-4">Remote Maintenance Scripts</h1>
         <div className="container" style={{ maxWidth: '1000px' }}>
-          <div className={`p-5 rounded text-center shadow ${theme === 'light-mode' ? 'bg-light text-dark border' : 'text-white'}`} style={theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}}>
+          <div className={`p-5 rounded text-center ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : 'text-white'}`} style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}>
             <h4>Please select a Virtual Machine</h4>
             <p className={theme === 'light-mode' ? 'text-secondary' : 'text-muted'}>You must select an active VM from the Computers page to run remote scripts.</p>
           </div>
@@ -111,7 +111,10 @@ New-NetFirewallRule -DisplayName "SIEM Block Ports ${portList} UDP" -Direction O
     );
   }
 
-  const cardStyle = theme === 'dark-mode' ? { backgroundColor: '#2b2b3c', color: 'white' } : { backgroundColor: '#f8f9fa' };
+  const cardStyle = {
+    boxShadow: '0 10px 25px rgba(0,0,0,0.85)',
+    ...(theme === 'dark-mode' ? { backgroundColor: '#2b2b3c', color: 'white' } : { backgroundColor: '#f8f9fa' })
+  };
 
   return (
     <div style={{ marginTop: '20px' }}>
@@ -126,7 +129,7 @@ New-NetFirewallRule -DisplayName "SIEM Block Ports ${portList} UDP" -Direction O
           
           {/* Card 1: Delete File */}
           <div className="col-md-6">
-            <MDBCard className="h-100 shadow border-0" style={cardStyle}>
+            <MDBCard className={`h-100 ${theme === 'light-mode' ? 'border border-dark' : 'border-0'}`} style={cardStyle}>
               <MDBCardBody>
                 <MDBCardTitle className="d-flex align-items-center mb-3 text-danger fw-bold">
                   <i className="fas fa-trash-alt me-2 fs-4"></i> Delete File/Folder
@@ -148,7 +151,7 @@ New-NetFirewallRule -DisplayName "SIEM Block Ports ${portList} UDP" -Direction O
 
           {/* Card 2: User Sign Out / Password Change */}
           <div className="col-md-6">
-            <MDBCard className="h-100 shadow border-0" style={cardStyle}>
+            <MDBCard className={`h-100 ${theme === 'light-mode' ? 'border border-dark' : 'border-0'}`} style={cardStyle}>
               <MDBCardBody>
                 <MDBCardTitle className="d-flex align-items-center mb-3 text-warning fw-bold">
                   <i className="fas fa-user-lock me-2 fs-4"></i> Lock User Account
@@ -178,7 +181,7 @@ New-NetFirewallRule -DisplayName "SIEM Block Ports ${portList} UDP" -Direction O
 
           {/* Card 3: Close Ports */}
           <div className="col-md-6">
-            <MDBCard className="h-100 shadow border-0" style={cardStyle}>
+            <MDBCard className={`h-100 ${theme === 'light-mode' ? 'border border-dark' : 'border-0'}`} style={cardStyle}>
               <MDBCardBody>
                 <MDBCardTitle className="d-flex align-items-center mb-3 text-success fw-bold">
                   <i className="fas fa-shield-alt me-2 fs-4"></i> Block Remote Ports
@@ -200,7 +203,7 @@ New-NetFirewallRule -DisplayName "SIEM Block Ports ${portList} UDP" -Direction O
 
           {/* Card 4: Custom Script */}
           <div className="col-md-6">
-            <MDBCard className="h-100 shadow border-0" style={cardStyle}>
+            <MDBCard className={`h-100 ${theme === 'light-mode' ? 'border border-dark' : 'border-0'}`} style={cardStyle}>
               <MDBCardBody>
                 <MDBCardTitle className="d-flex align-items-center mb-3 text-info fw-bold">
                   <i className="fas fa-terminal me-2 fs-4"></i> Run Custom PowerShell

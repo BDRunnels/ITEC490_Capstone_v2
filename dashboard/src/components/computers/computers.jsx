@@ -257,14 +257,14 @@ const Computers = () => {
         )}
 
         {!loading && !error && hosts.length === 0 && (
-          <div className="bg-image mt-4 mb-5 mx-auto p-5 rounded text-center text-white shadow" style={{ backgroundColor: "#1e1e2f" }}>
+          <div className={`mt-4 mb-5 mx-auto p-5 rounded text-center ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : 'bg-image text-white'}`} style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}>
             <h4>No Computers Found</h4>
             <p>Ensure your SIEM Agents are running on the end user machines.</p>
           </div>
         )}
 
         {!loading && !error && hosts.length > 0 && (
-           <div className={`p-4 rounded shadow ${theme === 'light-mode' ? 'border border-dark' : ''}`}>
+           <div className={`p-4 rounded ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : ''}`} style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)' }}>
              <div className="row">
                {hosts.map((host) => (
                   <div className="col-md-6 col-lg-4 mb-4" key={host.hostname}>

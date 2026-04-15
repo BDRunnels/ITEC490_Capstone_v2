@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { HostContext } from "../../context/HostContext";
-import { MDBAccordion, MDBAccordionItem } from 'mdb-react-ui-kit';
+import { MDBAccordion, MDBAccordionItem, MDBBtn } from 'mdb-react-ui-kit';
 import {
     searchTable,
     searchAll,
@@ -8,7 +8,7 @@ import {
 } from "./search";
 
 export default function SearchPage() {
-    const { currentHost } = useContext(HostContext);  // Get selected computer
+    const { currentHost, theme } = useContext(HostContext);
     
     const [query, setQuery] = useState("");
     const [table, setTable] = useState("security");
@@ -39,7 +39,6 @@ export default function SearchPage() {
         setError("");
         setLoading(true);
 
-        // Search across all hosts if no currentHost, or filter by host if selected
         searchTable(table, query, currentHost || null)
             .then(data => {
                 if (data.results) {
@@ -66,347 +65,264 @@ export default function SearchPage() {
         }
     }
 
-    // Prefetch search functions for common admin queries
     const runPrefetchSearch = (searchQuery, searchTable) => {
         setQuery(searchQuery);
         setTable(searchTable);
     };
 
     return (
-        <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
-            <h2>SIEM Search</h2>
+        <div style={{ marginTop: '20px' }}>
+            <h1 className="text-center mb-4">SIEM Search</h1>
 
-            {/* Selected Computer Display */}
-            <div style={{
-                marginBottom: "20px",
-                padding: "10px",
-                backgroundColor: currentHost ? "#e8f5e9" : "#e3f2fd",
-                border: `2px solid ${currentHost ? "#4caf50" : "#2196F3"}`,
-                borderRadius: "6px"
-            }}>
-                {currentHost ? (
-                    <p style={{ margin: 0, color: "#2e7d32", fontWeight: "bold" }}>
-                        ✓ Filtering by: <strong>{currentHost}</strong> (Click "Computers" to change)
-                    </p>
-                ) : (
-                    <p style={{ margin: 0, color: "#1565c0", fontWeight: "bold" }}>
-                        🔍 Searching across ALL hosts (Select a computer to filter by host)
-                    </p>
-                )}
-            </div>
-
-            {/* Quick Search Buttons */}
-            <div style={{ marginBottom: "20px" }}>
-                <h4 style={{ marginBottom: "10px", color: "#333" }}>Quick Searches</h4>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                        {/* Security Events */}
-                        <button
-                            onClick={() => runPrefetchSearch("4625", "security")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Failed login attempts"
-                        >
-                            🔐 Failed Logins
-                        </button>
-                        <button
-                            onClick={() => runPrefetchSearch("4624", "security")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#28a745",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Successful login events"
-                        >
-                            ✅ Successful Logins
-                        </button>
-                        <button
-                            onClick={() => runPrefetchSearch("4740", "security")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#ffc107",
-                                color: "black",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Account lockout events"
-                        >
-                            🔒 Account Lockouts
-                        </button>
-                        <button
-                            onClick={() => runPrefetchSearch("4720 OR 4722 OR 4724 OR 4738", "security")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#6f42c1",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="User account management events"
-                        >
-                            👤 Account Changes
-                        </button>
-
-                        {/* System Events */}
-                        <button
-                            onClick={() => runPrefetchSearch("7031 OR 7034", "system")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#fd7e14",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Service start/stop failures"
-                        >
-                            ⚙️ Service Failures
-                        </button>
-                        <button
-                            onClick={() => runPrefetchSearch("error", "system")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="System error events"
-                        >
-                            ❌ System Errors
-                        </button>
-                        <button
-                            onClick={() => runPrefetchSearch("12 OR 13", "system")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#20c997",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="System startup and shutdown events"
-                        >
-                            🔄 System Start/Stop
-                        </button>
-
-                        {/* Defender Events */}
-                        <button
-                            onClick={() => runPrefetchSearch("threat", "defender")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#e83e8c",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Windows Defender threat detections"
-                        >
-                            🛡️ Defender Threats
-                        </button>
-                        <button
-                            onClick={() => runPrefetchSearch("scan", "defender")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#17a2b8",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="Defender scan results"
-                        >
-                            🔍 Scan Results
-                        </button>
-
-                        {/* General Searches */}
-                        <button
-                            onClick={() => runPrefetchSearch("warning", "system")}
-                            style={{
-                                padding: "8px 12px",
-                                backgroundColor: "#ffc107",
-                                color: "black",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "12px"
-                            }}
-                            title="System warning events"
-                        >
-                            ⚠️ Warnings
-                        </button>
-                    </div>
-                </div>
-
-            {/* Search Controls */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-                <input
-                    style={{
-                        flex: 1,
-                        padding: "8px"
-                    }}
-                    placeholder="Search logs…"
-                    value={query}
-                    onChange={e => setQuery(e.target.value)}
-                />
-
-                <select
-                    value={table}
-                    onChange={e => setTable(e.target.value)}
-                    style={{
-                        padding: "8px"
-                    }}
+            <div className="container" style={{ maxWidth: '1000px' }}>
+                <div
+                    className={`p-4 rounded ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : ''}`}
+                    style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}
                 >
-                    <option value="security">Security</option>
-                    <option value="system">System</option>
-                    <option value="defender">Defender</option>
-                    <option value="agent">Agent</option>
-                </select>
-            </div>
 
-            {/* Error Message */}
-            {error && (
-                <div style={{
-                    padding: "12px",
-                    marginBottom: "20px",
-                    backgroundColor: "#ffcdd2",
-                    color: "#b71c1c",
-                    borderRadius: "4px"
-                }}>
-                    {error}
-                </div>
-            )}
+                    {/* Selected Computer Display */}
+                    <div className={`alert ${currentHost ? 'alert-success' : 'alert-info'} d-flex align-items-center mb-4`}>
+                        {currentHost ? (
+                            <span className="fw-bold">
+                                <i className="fas fa-check-circle me-2"></i>
+                                Filtering by: <strong>{currentHost}</strong> (Click "Computers" to change)
+                            </span>
+                        ) : (
+                            <span className="fw-bold">
+                                <i className="fas fa-search me-2"></i>
+                                Searching across ALL hosts (Select a computer to filter by host)
+                            </span>
+                        )}
+                    </div>
 
-            {/* Loading Indicator */}
-            {loading && <p style={{ fontStyle: "italic", color: "#666" }}>Searching…</p>}
-
-            {/* Results List */}
-            {!loading && results.length > 0 && (
-                <div style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "6px",
-                    overflow: "hidden"
-                }}>
-                    <p style={{ padding: "10px", background: "#f5f5f5", margin: 0 }}>
-                        Found <strong>{results.length}</strong> result(s) across <strong>{Object.keys(groupedResults).length}</strong> host(s)
-                    </p>
-
-                    <MDBAccordion initialActive={1}>
-                        {Object.entries(groupedResults).map(([hostname, hostResults], index) => (
-                            <MDBAccordionItem
-                                collapseId={index + 1}
-                                headerTitle={`${hostname} (${hostResults.length} result${hostResults.length !== 1 ? 's' : ''})`}
-                                key={hostname}
-                                className="mb-0"
+                    {/* Quick Search Buttons */}
+                    <div className="mb-4">
+                        <h5 className={`mb-3 ${theme === 'light-mode' ? 'text-light' : 'text-white'}`}>
+                            <i className="fas fa-bolt me-2 text-warning"></i>Quick Searches
+                        </h5>
+                        <div className="d-flex flex-wrap gap-2">
+                            {/* Security Events */}
+                            <button
+                                className="btn btn-danger btn-sm rounded-pill px-3 shadow-sm"
+                                onClick={() => runPrefetchSearch("4625", "security")}
+                                title="Failed login attempts"
                             >
-                                <div style={{ padding: "10px" }}>
-                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                                        <thead style={{ background: "#f9f9f9" }}>
-                                            <tr>
-                                                <th style={{ padding: "8px", textAlign: "left" }}>Timestamp</th>
-                                                <th style={{ padding: "8px", textAlign: "left" }}>Message</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {hostResults.map(row => (
-                                                <tr
-                                                    key={row.id}
-                                                    onClick={() => openDetail(row)}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        borderBottom: "1px solid #eee"
-                                                    }}
-                                                >
-                                                    <td style={{ padding: "8px" }}>{row.timestamp}</td>
-                                                    <td style={{ padding: "8px" }}>
-                                                        {row.message?.slice(0, 120)}…
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </MDBAccordionItem>
-                        ))}
-                    </MDBAccordion>
-                </div>
-            )}
+                                <i className="fas fa-lock me-1"></i> Failed Logins
+                            </button>
+                            <button
+                                className="btn btn-success btn-sm rounded-pill px-3 shadow-sm"
+                                onClick={() => runPrefetchSearch("4624", "security")}
+                                title="Successful login events"
+                            >
+                                <i className="fas fa-check me-1"></i> Successful Logins
+                            </button>
+                            <button
+                                className="btn btn-warning btn-sm rounded-pill px-3 shadow-sm"
+                                onClick={() => runPrefetchSearch("4740", "security")}
+                                title="Account lockout events"
+                            >
+                                <i className="fas fa-user-lock me-1"></i> Account Lockouts
+                            </button>
+                            <button
+                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
+                                style={{ backgroundColor: "#6f42c1" }}
+                                onClick={() => runPrefetchSearch("4720 OR 4722 OR 4724 OR 4738", "security")}
+                                title="User account management events"
+                            >
+                                <i className="fas fa-user-edit me-1"></i> Account Changes
+                            </button>
 
-            {/* No results */}
-            {!loading && query && results.length === 0 && (
-                <p style={{ color: "#999" }}>
-                    No results found for "{query}" {currentHost ? `on ${currentHost}` : "across all hosts"}.
-                </p>
-            )}
+                            {/* System Events */}
+                            <button
+                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
+                                style={{ backgroundColor: "#fd7e14" }}
+                                onClick={() => runPrefetchSearch("7031 OR 7034", "system")}
+                                title="Service start/stop failures"
+                            >
+                                <i className="fas fa-cogs me-1"></i> Service Failures
+                            </button>
+                            <button
+                                className="btn btn-danger btn-sm rounded-pill px-3 shadow-sm"
+                                onClick={() => runPrefetchSearch("error", "system")}
+                                title="System error events"
+                            >
+                                <i className="fas fa-times-circle me-1"></i> System Errors
+                            </button>
+                            <button
+                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
+                                style={{ backgroundColor: "#20c997" }}
+                                onClick={() => runPrefetchSearch("12 OR 13", "system")}
+                                title="System startup and shutdown events"
+                            >
+                                <i className="fas fa-sync-alt me-1"></i> System Start/Stop
+                            </button>
+
+                            {/* Defender Events */}
+                            <button
+                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
+                                style={{ backgroundColor: "#e83e8c" }}
+                                onClick={() => runPrefetchSearch("threat", "defender")}
+                                title="Windows Defender threat detections"
+                            >
+                                <i className="fas fa-shield-alt me-1"></i> Defender Threats
+                            </button>
+                            <button
+                                className="btn btn-info btn-sm rounded-pill px-3 shadow-sm text-white"
+                                onClick={() => runPrefetchSearch("scan", "defender")}
+                                title="Defender scan results"
+                            >
+                                <i className="fas fa-search me-1"></i> Scan Results
+                            </button>
+
+                            {/* General Searches */}
+                            <button
+                                className="btn btn-warning btn-sm rounded-pill px-3 shadow-sm"
+                                onClick={() => runPrefetchSearch("warning", "system")}
+                                title="System warning events"
+                            >
+                                <i className="fas fa-exclamation-triangle me-1"></i> Warnings
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Search Controls */}
+                    <div className="input-group mb-4">
+                        <span className="input-group-text bg-dark border-dark text-white">
+                            <i className="fas fa-search"></i>
+                        </span>
+                        <input
+                            type="text"
+                            className="form-control bg-dark text-white border-white"
+                            placeholder="Search logs…"
+                            value={query}
+                            onChange={e => setQuery(e.target.value)}
+                        />
+                        <select
+                            className="form-select bg-dark text-white border-white mx-2"
+                            value={table}
+                            onChange={e => setTable(e.target.value)}
+                            style={{ maxWidth: '150px' }}
+                        >
+                            <option value="security">Security</option>
+                            <option value="system">System</option>
+                            <option value="defender">Defender</option>
+                            <option value="agent">Agent</option>
+                        </select>
+                    </div>
+
+                    {/* Error Message */}
+                    {error && (
+                        <div className="alert alert-danger" role="alert">
+                            <i className="fas fa-exclamation-circle me-2"></i>{error}
+                        </div>
+                    )}
+
+                    {/* Loading Indicator */}
+                    {loading && (
+                        <div className="text-center p-3">
+                            <span className="spinner-border spinner-border-sm text-primary me-2"></span>
+                            <span className={theme === 'light-mode' ? 'text-light' : 'text-muted'}>Searching…</span>
+                        </div>
+                    )}
+
+                    {/* Results List */}
+                    {!loading && results.length > 0 && (
+                        <div>
+                            <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                <span className={`fw-bold ${theme === 'light-mode' ? 'text-light' : 'text-white'}`}>
+                                    Found <span className="badge bg-primary">{results.length}</span> result(s) across <span className="badge bg-info">{Object.keys(groupedResults).length}</span> host(s)
+                                </span>
+                            </div>
+
+                            <MDBAccordion initialActive={1}>
+                                {Object.entries(groupedResults).map(([hostname, hostResults], index) => (
+                                    <MDBAccordionItem
+                                        collapseId={index + 1}
+                                        headerTitle={`${hostname} (${hostResults.length} result${hostResults.length !== 1 ? 's' : ''})`}
+                                        key={hostname}
+                                        className="mb-3 border border-dark rounded shadow-5-strong"
+                                    >
+                                        <div className={`p-3 ${theme === 'light-mode' ? 'bg-light text-dark' : ''}`} style={theme === 'dark-mode' ? { backgroundColor: "#2b2b3c", color: "white", borderRadius: "5px" } : { borderRadius: "5px" }}>
+                                            <div className="table-responsive">
+                                                <table className={`table table-sm table-hover ${theme === 'dark-mode' ? 'table-dark table-striped' : 'table-striped'}`}>
+                                                    <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
+                                                        <tr>
+                                                            <th className="text-uppercase text-nowrap">Timestamp</th>
+                                                            <th className="text-uppercase">Message</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {hostResults.map(row => (
+                                                            <tr
+                                                                key={row.id}
+                                                                onClick={() => openDetail(row)}
+                                                                style={{ cursor: "pointer" }}
+                                                            >
+                                                                <td className="text-nowrap">{row.timestamp}</td>
+                                                                <td>{row.message?.slice(0, 120)}…</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </MDBAccordionItem>
+                                ))}
+                            </MDBAccordion>
+                        </div>
+                    )}
+
+                    {/* No results */}
+                    {!loading && query && results.length === 0 && (
+                        <p className={theme === 'light-mode' ? 'text-secondary text-center m-0' : 'text-muted text-center m-0'}>
+                            No results found for "{query}" {currentHost ? `on ${currentHost}` : "across all hosts"}.
+                        </p>
+                    )}
+                </div>
+            </div>
 
             {/* Detail Modal */}
             {selected && (
-                <div style={{
-                    position: "fixed",
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    background: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: 1000
-                }}>
-                    <div style={{
-                        background: "white",
-                        padding: "20px",
-                        width: "600px",
-                        maxHeight: "80vh",
-                        overflowY: "auto",
-                        borderRadius: "8px"
-                    }}>
-                        <h3>Log Details</h3>
-
-                        <pre style={{
-                            background: "#f7f7f7",
-                            padding: "10px",
-                            borderRadius: "6px",
-                            whiteSpace: "pre-wrap",
-                            fontSize: "12px",
-                            maxHeight: "50vh",
+                <div
+                    className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+                    style={{ background: "rgba(0,0,0,0.7)", zIndex: 1050 }}
+                    onClick={() => setSelected(null)}
+                >
+                    <div
+                        className="rounded shadow-5-strong p-4"
+                        style={{
+                            backgroundColor: theme === 'dark-mode' ? "#1e1e2f" : "white",
+                            color: theme === 'dark-mode' ? "white" : "black",
+                            width: "650px",
+                            maxHeight: "80vh",
                             overflowY: "auto"
-                        }}>
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                            <h4 className="mb-0"><i className="fas fa-file-alt me-2 text-primary"></i>Log Details</h4>
+                            <button className="btn-close btn-close-white" onClick={() => setSelected(null)}></button>
+                        </div>
+
+                        <pre
+                            className="rounded p-3"
+                            style={{
+                                backgroundColor: theme === 'dark-mode' ? "#2b2b3c" : "#f7f7f7",
+                                color: theme === 'dark-mode' ? "#e0e0e0" : "#333",
+                                whiteSpace: "pre-wrap",
+                                fontSize: "12px",
+                                maxHeight: "55vh",
+                                overflowY: "auto"
+                            }}
+                        >
 {JSON.stringify(selected, null, 2)}
                         </pre>
 
-                        <button
-                            onClick={() => setSelected(null)}
-                            style={{
-                                marginTop: "10px",
-                                padding: "8px 12px",
-                                background: "#333",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer"
-                            }}
-                        >
-                            Close
-                        </button>
+                        <div className="text-end mt-3">
+                            <MDBBtn color="secondary" onClick={() => setSelected(null)}>
+                                <i className="fas fa-times me-2"></i>Close
+                            </MDBBtn>
+                        </div>
                     </div>
                 </div>
             )}

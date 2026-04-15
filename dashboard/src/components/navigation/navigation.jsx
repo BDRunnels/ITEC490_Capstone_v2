@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HostContext } from '../../context/HostContext';
 import {
   MDBNavbar,
@@ -22,6 +22,12 @@ import {
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { currentHost, username, logout } = useContext(HostContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/');
+    logout();
+  };
   
   const [hovered1, setHovered1] = useState(false);
   const [hovered2, setHovered2] = useState(false);
@@ -209,7 +215,7 @@ const Navigation = () => {
               </MDBNavbarItem>
               <MDBNavbarItem>
                 <span className='nav-link'>
-                    <MDBBtn outline color='white' onMouseEnter={handleHover6} onMouseLeave={handleHover6} style={buttonStyle6} onClick={logout} type='button'>
+                    <MDBBtn outline color='white' onMouseEnter={handleHover6} onMouseLeave={handleHover6} style={buttonStyle6} onClick={handleLogout} type='button'>
                         <i className="fas fa-sign-out-alt me-2"></i>Sign Out
                     </MDBBtn>
                 </span>

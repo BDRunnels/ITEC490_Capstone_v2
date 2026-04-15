@@ -13,7 +13,7 @@ import Computers from "./components/computers/computers";
 import Logs from "./components/logs/logs";
 import Scripts from "./components/scripts/scripts";
 import About from "./components/about/about";
-import SearchPage from "./components/search/SearchPage";
+import SearchPage from "./components/search/searchPage";
 
 import Admin from "./components/admin/admin";
 

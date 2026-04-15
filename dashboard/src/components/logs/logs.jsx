@@ -87,7 +87,7 @@ const Logs = () => {
       <div style={{ marginTop: '20px' }}>
         <h1 className="text-center mb-4">Logs</h1>
         <div className="container" style={{ maxWidth: '1000px' }}>
-          <div className={`p-5 rounded text-center shadow ${theme === 'light-mode' ? 'bg-light text-dark border' : 'text-white'}`} style={theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}}>
+          <div className={`p-5 rounded text-center ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : 'text-white'}`} style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}>
             <h4>Please select a Virtual Machine</h4>
             <p className={theme === 'light-mode' ? 'text-secondary' : 'text-muted'}>You must select an active VM from the Computers page to view logs.</p>
           </div>
@@ -96,7 +96,7 @@ const Logs = () => {
     );
   }
 
-  const renderLogTable = (typeId) => {
+    const renderLogTable = (typeId) => {
     const data = logsData[typeId];
     
     if (loading) {
@@ -111,6 +111,48 @@ const Logs = () => {
       );
     }
     
+    if (typeId === 'hardware') {
+       // Sort by timestamp asc so baseline is the earliest
+       const sortedData = [...data].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+       const baseline = sortedData[0];
+       const subsequent = sortedData.slice(1);
+       
+       const headers = Object.keys(data[0]).filter(k => k !== "id" && k !== "hostname");
+       
+       const renderTable = (rows) => (
+          <div className="table-responsive">
+            <table className={`table table-sm table-hover ${theme === 'dark-mode' ? 'table-dark table-striped' : 'table-striped'}`}>
+              <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
+                <tr>
+                  {headers.map(h => <th key={h} className="text-uppercase text-nowrap">{h.replace(/_/g, " ")}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, i) => (
+                  <tr key={i}>
+                    {headers.map(h => <td key={h}>{row[h] !== null ? String(row[h]) : ""}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+       );
+       
+       return (
+          <div className="mt-3">
+             <h6 className={`fw-bold mb-2 ${theme === 'dark-mode' ? 'text-info' : 'text-primary'}`}>Baseline Hardware</h6>
+             {renderTable([baseline])}
+             
+             {subsequent.length > 0 && (
+                <>
+                   <h6 className={`fw-bold mt-4 mb-2 ${theme === 'dark-mode' ? 'text-warning' : 'text-secondary'}`}>Subsequent Hardware Check-ins</h6>
+                   {renderTable(subsequent)}
+                </>
+             )}
+          </div>
+       );
+    }
+
     const headers = Object.keys(data[0]).filter(k => k !== "id" && k !== "hostname");
     
     return (
@@ -139,8 +181,8 @@ const Logs = () => {
       
       <div className="container" style={{ maxWidth: '1000px' }}>
         <div 
-          className="p-4 rounded shadow" 
-          style={theme === 'light-mode' ? { backgroundColor: "black" } : { backgroundColor: "#1e1e2f" }}
+          className={`p-4 rounded ${theme === 'light-mode' ? 'bg-light text-dark border border-dark' : ''}`}
+          style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}
         >
           <div className="d-flex justify-content-end mb-3">
              <button className="btn btn-outline-info btn-sm" onClick={fetchAllLogs} disabled={loading}>
