@@ -153,6 +153,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HostContext } from '../../context/HostContext';
+import { MDBBtn } from 'mdb-react-ui-kit';
 
 const Computers = () => {
   const { currentHost, setCurrentHost, theme, apiBase } = useContext(HostContext);
@@ -317,8 +318,8 @@ const Computers = () => {
                           {hoveredHost === host.hostname && (
                             <div className="position-absolute w-100 h-100 d-flex flex-column justify-content-center align-items-center" 
                                  style={{ top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.85)', borderRadius: 'inherit' }}>
-                               <button 
-                                  className="btn btn-primary shadow-sm mb-2"
+                               <MDBBtn 
+                                  color="primary" className="shadow-sm mb-2"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setCurrentHost(host.hostname);
@@ -326,10 +327,10 @@ const Computers = () => {
                                   }}
                                >
                                   <i className="fas fa-list me-2"></i>View Logs
-                               </button>
+                               </MDBBtn>
 
-                               <button 
-                                  className="btn btn-danger shadow-sm btn-sm"
+                               <MDBBtn 
+                                  color="danger" size="sm" className="shadow-sm"
                                   onClick={async (e) => {
                                     e.stopPropagation();
                                     const pwd = window.prompt(`WARNING: Are you sure you want to terminate the SIEM Agent permanently on "${host.hostname}"?\n\nEnter administrator password to confirm:`);
@@ -352,7 +353,7 @@ const Computers = () => {
                                   }}
                                >
                                   <i className="fas fa-skull-crossbones me-2"></i>Kill Agent
-                               </button>
+                               </MDBBtn>
                             </div>
                           )}
 

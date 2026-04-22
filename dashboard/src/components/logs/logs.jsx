@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { HostContext } from '../../context/HostContext';
-import { MDBAccordion, MDBAccordionItem } from 'mdb-react-ui-kit';
+import { MDBAccordion, MDBAccordionItem, MDBBtn } from 'mdb-react-ui-kit';
 import { buildScriptForLogType } from '../../utils/scripts';
 
 const logTypes = [
@@ -185,9 +185,9 @@ const Logs = () => {
           style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.85)', ...(theme === 'dark-mode' ? { backgroundColor: "#1e1e2f" } : {}) }}
         >
           <div className="d-flex justify-content-end mb-3">
-             <button className="btn btn-outline-info btn-sm" onClick={fetchAllLogs} disabled={loading}>
+             <MDBBtn outline color="info" size="sm" onClick={fetchAllLogs} disabled={loading}>
                 <i className={`fas fa-sync-alt me-2 ${loading ? 'fa-spin' : ''}`}></i> Refresh All Logs
-             </button>
+             </MDBBtn>
           </div>
           <MDBAccordion initialActive={1}>
             {logTypes.map((type, index) => (
@@ -201,8 +201,8 @@ const Logs = () => {
                   {type.id !== 'commands' && (
                     <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
                        <span className="fw-bold">{type.label} Logs</span>
-                       <button 
-                         className="btn btn-primary btn-sm rounded-pill px-3 shadow-sm hover-shadow"
+                       <MDBBtn 
+                         color="primary" size="sm" className="shadow-sm hover-shadow"
                          onClick={() => requestLogs(type.id)}
                          disabled={requestingLogType === type.id}
                        >
@@ -211,7 +211,7 @@ const Logs = () => {
                          ) : (
                            <><i className="fas fa-cloud-download-alt me-2"></i> Request Fresh Logs</>
                          )}
-                       </button>
+                       </MDBBtn>
                     </div>
                   )}
                   {type.id === 'commands' && <div className="fw-bold border-bottom pb-2 mb-2">Command Execution History</div>}

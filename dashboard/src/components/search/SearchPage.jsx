@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { HostContext } from "../../context/HostContext";
-import { MDBAccordion, MDBAccordionItem, MDBBtn } from 'mdb-react-ui-kit';
+import { MDBAccordion, MDBAccordionItem, MDBBtn, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import {
     searchTable,
     searchAll,
@@ -98,91 +98,111 @@ export default function SearchPage() {
                     {/* Quick Search Buttons */}
                     <div className="mb-4">
                         <h5 className={`mb-3 ${theme === 'light-mode' ? 'text-light' : 'text-white'}`}>
-                            <i className="fas fa-bolt me-2 text-warning"></i>Quick Searches
+                            Quick Searches
                         </h5>
-                        <div className="d-flex flex-wrap gap-2">
+                        <MDBRow className="g-2">
                             {/* Security Events */}
-                            <button
-                                className="btn btn-danger btn-sm rounded-pill px-3 shadow-sm"
-                                onClick={() => runPrefetchSearch("4625", "security")}
-                                title="Failed login attempts"
-                            >
-                                <i className="fas fa-lock me-1"></i> Failed Logins
-                            </button>
-                            <button
-                                className="btn btn-success btn-sm rounded-pill px-3 shadow-sm"
-                                onClick={() => runPrefetchSearch("4624", "security")}
-                                title="Successful login events"
-                            >
-                                <i className="fas fa-check me-1"></i> Successful Logins
-                            </button>
-                            <button
-                                className="btn btn-warning btn-sm rounded-pill px-3 shadow-sm"
-                                onClick={() => runPrefetchSearch("4740", "security")}
-                                title="Account lockout events"
-                            >
-                                <i className="fas fa-user-lock me-1"></i> Account Lockouts
-                            </button>
-                            <button
-                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
-                                style={{ backgroundColor: "#6f42c1" }}
-                                onClick={() => runPrefetchSearch("4720 OR 4722 OR 4724 OR 4738", "security")}
-                                title="User account management events"
-                            >
-                                <i className="fas fa-user-edit me-1"></i> Account Changes
-                            </button>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    color="danger" size="sm" className="w-100 shadow-sm"
+                                    onClick={() => runPrefetchSearch("4625", "security")}
+                                    title="Failed login attempts"
+                                >
+                                    <i className="fas fa-lock me-1"></i> Failed Logins
+                                </MDBBtn>
+                            </MDBCol>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    color="success" size="sm" className="w-100 shadow-sm"
+                                    onClick={() => runPrefetchSearch("4624", "security")}
+                                    title="Successful login events"
+                                >
+                                    <i className="fas fa-check me-1"></i> Successful Logins
+                                </MDBBtn>
+                            </MDBCol>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    color="warning" size="sm" className="w-100 shadow-sm"
+                                    onClick={() => runPrefetchSearch("4740", "security")}
+                                    title="Account lockout events"
+                                >
+                                    <i className="fas fa-user-lock me-1"></i> Account Lockouts
+                                </MDBBtn>
+                            </MDBCol>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    size="sm" className="w-100 shadow-sm text-white"
+                                    style={{ backgroundColor: "#6f42c1" }}
+                                    onClick={() => runPrefetchSearch("4720 OR 4722 OR 4724 OR 4738", "security")}
+                                    title="User account management events"
+                                >
+                                    <i className="fas fa-user-edit me-1"></i> Account Changes
+                                </MDBBtn>
+                            </MDBCol>
 
                             {/* System Events */}
-                            <button
-                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
-                                style={{ backgroundColor: "#fd7e14" }}
-                                onClick={() => runPrefetchSearch("7031 OR 7034", "system")}
-                                title="Service start/stop failures"
-                            >
-                                <i className="fas fa-cogs me-1"></i> Service Failures
-                            </button>
-                            <button
-                                className="btn btn-danger btn-sm rounded-pill px-3 shadow-sm"
-                                onClick={() => runPrefetchSearch("error", "system")}
-                                title="System error events"
-                            >
-                                <i className="fas fa-times-circle me-1"></i> System Errors
-                            </button>
-                            <button
-                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
-                                style={{ backgroundColor: "#20c997" }}
-                                onClick={() => runPrefetchSearch("12 OR 13", "system")}
-                                title="System startup and shutdown events"
-                            >
-                                <i className="fas fa-sync-alt me-1"></i> System Start/Stop
-                            </button>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    size="sm" className="w-100 shadow-sm text-white"
+                                    style={{ backgroundColor: "#fd7e14" }}
+                                    onClick={() => runPrefetchSearch("7031 OR 7034", "system")}
+                                    title="Service start/stop failures"
+                                >
+                                    <i className="fas fa-cogs me-1"></i> Service Failures
+                                </MDBBtn>
+                            </MDBCol>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    color="danger" size="sm" className="w-100 shadow-sm"
+                                    onClick={() => runPrefetchSearch("error", "system")}
+                                    title="System error events"
+                                >
+                                    <i className="fas fa-times-circle me-1"></i> System Errors
+                                </MDBBtn>
+                            </MDBCol>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    size="sm" className="w-100 shadow-sm text-white"
+                                    style={{ backgroundColor: "#20c997" }}
+                                    onClick={() => runPrefetchSearch("12 OR 13", "system")}
+                                    title="System startup and shutdown events"
+                                >
+                                    <i className="fas fa-sync-alt me-1"></i> System Start/Stop
+                                </MDBBtn>
+                            </MDBCol>
 
                             {/* Defender Events */}
-                            <button
-                                className="btn btn-sm rounded-pill px-3 shadow-sm text-white"
-                                style={{ backgroundColor: "#e83e8c" }}
-                                onClick={() => runPrefetchSearch("threat", "defender")}
-                                title="Windows Defender threat detections"
-                            >
-                                <i className="fas fa-shield-alt me-1"></i> Defender Threats
-                            </button>
-                            <button
-                                className="btn btn-info btn-sm rounded-pill px-3 shadow-sm text-white"
-                                onClick={() => runPrefetchSearch("scan", "defender")}
-                                title="Defender scan results"
-                            >
-                                <i className="fas fa-search me-1"></i> Scan Results
-                            </button>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    size="sm" className="w-100 shadow-sm text-white"
+                                    style={{ backgroundColor: "#e83e8c" }}
+                                    onClick={() => runPrefetchSearch("threat", "defender")}
+                                    title="Windows Defender threat detections"
+                                >
+                                    <i className="fas fa-shield-alt me-1"></i> Defender Threats
+                                </MDBBtn>
+                            </MDBCol>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    color="info" size="sm" className="w-100 shadow-sm text-white"
+                                    onClick={() => runPrefetchSearch("scan", "defender")}
+                                    title="Defender scan results"
+                                >
+                                    <i className="fas fa-search me-1"></i> Scan Results
+                                </MDBBtn>
+                            </MDBCol>
 
                             {/* General Searches */}
-                            <button
-                                className="btn btn-warning btn-sm rounded-pill px-3 shadow-sm"
-                                onClick={() => runPrefetchSearch("warning", "system")}
-                                title="System warning events"
-                            >
-                                <i className="fas fa-exclamation-triangle me-1"></i> Warnings
-                            </button>
-                        </div>
+                            <MDBCol xs="12" sm="6" md="4" lg="3">
+                                <MDBBtn
+                                    color="warning" size="sm" className="w-100 shadow-sm"
+                                    onClick={() => runPrefetchSearch("warning", "system")}
+                                    title="System warning events"
+                                >
+                                    <i className="fas fa-exclamation-triangle me-1"></i> Warnings
+                                </MDBBtn>
+                            </MDBCol>
+                        </MDBRow>
                     </div>
 
                     {/* Search Controls */}
@@ -301,7 +321,7 @@ export default function SearchPage() {
                     >
                         <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                             <h4 className="mb-0"><i className="fas fa-file-alt me-2 text-primary"></i>Log Details</h4>
-                            <button className="btn-close btn-close-white" onClick={() => setSelected(null)}></button>
+                            <MDBBtn className="btn-close btn-close-white" color="none" onClick={() => setSelected(null)}></MDBBtn>
                         </div>
 
                         <pre

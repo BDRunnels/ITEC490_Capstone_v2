@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { MDBBtn } from 'mdb-react-ui-kit';
 
 const CVE = () => {
   const [cveData, setCveData] = useState([]);
@@ -26,16 +27,16 @@ const CVE = () => {
       setError(null);
       try {
         // Fetch up to 100 results so we can paginate locally for speed
-        let url = "/rest/json/cves/2.0?resultsPerPage=100";
+        let url = "/rest/json/cves/2.0?resultsPerPage=2000";
         
         if (activeSearch && activeSearch.toLowerCase().match(/^cve-\d{4}-\d{4,}$/)) {
             url += `&cveId=${activeSearch}`;
         } else {
             if (activeSearch) url += `&keywordSearch=${encodeURIComponent(activeSearch)}`;
             // Always fetch based on the trailing 120 days window to ensure recent Intel
-            const dates = getInitialDates();
-            url += `&pubStartDate=${dates.start}T00:00:00.000`;
-            url += `&pubEndDate=${dates.end}T23:59:59.999`;
+            // const dates = getInitialDates();
+            // url += `&pubStartDate=${dates.start}T00:00:00.000`;
+            // url += `&pubEndDate=${dates.end}T23:59:59.999`;
         }
 
         // Prepare headers. If an API key is available in the environment, attach it for higher rate limits.
@@ -116,9 +117,9 @@ const CVE = () => {
                 onChange={handleSearchChange}
                 style={{ backgroundColor: "#2b2b3c", color: "white", border: "1px solid #4d4d5b" }}
               />
-              <button type="submit" className="btn btn-primary shadow-0" disabled={loading}>
+              <MDBBtn type="submit" className="shadow-0" disabled={loading}>
                 {loading ? "Searching..." : "Search"}
-              </button>
+              </MDBBtn>
             </form>
           </div>
 
@@ -147,25 +148,25 @@ const CVE = () => {
           {/* Pagination Controls */}
           {!loading && !error && cveData.length > 0 && (
             <div className="d-flex justify-content-center align-items-center mb-3">
-              <button
-                className="btn btn-sm btn-light me-2"
+              <MDBBtn
+                color="light" size="sm" className="me-2"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
               >
                 Previous
-              </button>
+              </MDBBtn>
 
               <span className="text-white small">
                 Page {currentPage} of {totalPages || 1}
               </span>
 
-              <button
-                className="btn btn-sm btn-light ms-2"
+              <MDBBtn
+                color="light" size="sm" className="ms-2"
                 disabled={currentPage === totalPages || totalPages === 0}
                 onClick={() => setCurrentPage(currentPage + 1)}
               >
                 Next
-              </button>
+              </MDBBtn>
             </div>
           )}
 

@@ -257,15 +257,15 @@ const Admin = () => {
                  {/* Agent Scripts Generation Column */}
                  <div className="col-md-4 mb-4">
                     <div className="p-4 h-100 rounded border border-warning" style={{ backgroundColor: theme === 'dark-mode' ? "#2b2b3c" : "#fff" }}>
-                      <h5><i className="fas fa-download text-warning me-2"></i> Agent Distributions</h5>
-                      <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Download pre-packaged SIEM script installers or terminal disruption payloads to physically run on target systems.</p>
+                      <h5><i className="fas fa-download text-warning me-2"></i> SIEM Agent </h5>
+                      <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Download the Logfather agent or the terminal kill script.</p>
                       
                       <div className="d-grid gap-3">
-                          <MDBBtn tag="a" onClick={downloadAgent} outline color="warning" className="hover-shadow">
+                          <MDBBtn tag="a" onClick={downloadAgent}  color="warning" className="hover-shadow">
                             <i className="fas fa-file-archive me-2"></i> Download Agent Bundle
                           </MDBBtn>
 
-                          <MDBBtn tag="a" onClick={downloadKillScript} outline color="danger" className="hover-shadow" download>
+                          <MDBBtn tag="a" onClick={downloadKillScript}  color="danger" className="hover-shadow" download>
                            <i className="fas fa-skull-crossbones me-2"></i> Download Kill Script
                           </MDBBtn>
                       </div>
@@ -275,14 +275,14 @@ const Admin = () => {
                  {/* Dummy Data Engineering Column */}
                  <div className="col-md-4 mb-4">
                     <div className="p-4 h-100 rounded border border-info" style={{ backgroundColor: theme === 'dark-mode' ? "#2b2b3c" : "#fff" }}>
-                      <h5><i className="fas fa-flask text-info me-2"></i> Testing Utilities</h5>
-                      <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Instantly populate the active master database with artificial Virtual Machine network topology models and threat events.</p>
+                      <h5><i className="fas fa-flask text-info me-2"></i> Testing </h5>
+                      <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Populate the database with mock VM data.</p>
                       
                       <div className="d-grid gap-3 mt-auto">
-                         <MDBBtn onClick={() => handleSeedAction("/api/seed", "seed data", setIsSeeding)} outline color="info" className="hover-shadow" disabled={isSeeding}>
+                         <MDBBtn onClick={() => handleSeedAction("/api/seed", "seed data", setIsSeeding)}  color="info" className="hover-shadow" disabled={isSeeding}>
                            {isSeeding ? 'Injecting...' : <><i className="fas fa-syringe me-2"></i> Inject Dummy Data</>}
                          </MDBBtn>
-                         <MDBBtn onClick={() => handleSeedAction("/api/unseed", "unseed data", setIsUnseeding)} outline color="secondary" className="hover-shadow" disabled={isUnseeding}>
+                         <MDBBtn onClick={() => handleSeedAction("/api/unseed", "unseed data", setIsUnseeding)}  color="info" className="hover-shadow" disabled={isUnseeding}>
                            {isUnseeding ? 'Removing...' : <><i className="fas fa-eraser me-2"></i> Remove Dummy Data</>}
                          </MDBBtn>
                       </div>
@@ -292,12 +292,12 @@ const Admin = () => {
                  {/* Database Management Column */}
                  <div className="col-md-4 mb-4">
                     <div className="p-4 h-100 rounded border border-danger" style={{ backgroundColor: theme === 'dark-mode' ? "#2b2b3c" : "#fff" }}>
-                      <h5><i className="fas fa-database text-danger me-2"></i> Vault Management</h5>
-                      <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Trigger an immediate, irreversible wipe of all aggregated telemetry logs. Command history is uniquely preserved.</p>
+                      <h5><i className="fas fa-database text-danger me-2"></i> Database Actions</h5>
+                      <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Delete all logs in the database. Command history is uniquely preserved.</p>
                       
                       <div className="d-grid mt-auto">
                          <MDBBtn onClick={handleWipeDatabase} color="danger" className="hover-shadow" disabled={isWiping}>
-                           {isWiping ? 'Wiping...' : <><i className="fas fa-fire me-2"></i> Purge Database</>}
+                           {isWiping ? 'Wiping...' : <><i className="fas fa-fire me-2"></i> Wipe Database</>}
                          </MDBBtn>
                       </div>
                     </div>

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { HostContext } from '../../context/HostContext';
+import { MDBBtn } from 'mdb-react-ui-kit';
 
 const Login = () => {
   const { login } = useContext(HostContext);
@@ -94,13 +95,13 @@ const Login = () => {
             </div>
           )}
 
-          <button
+          <MDBBtn
             type="submit"
-            className="btn btn-primary w-100 shadow"
+            className="w-100 shadow"
             style={{ fontWeight: 'bold', letterSpacing: '0.5px', padding: '10px' }}
           >
             <i className="fas fa-sign-in-alt me-2"></i>Sign In
-          </button>
+          </MDBBtn>
         </form>
       </div>
     </div>

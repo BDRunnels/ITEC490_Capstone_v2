@@ -20,9 +20,9 @@ body.light-mode {
     box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
 }
 
-.container {
+/* .container {
     border: 2px solid white;
-}
+} */
 
 .d-sm-grid {
     max-width: 768px;
