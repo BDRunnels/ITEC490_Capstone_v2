@@ -194,36 +194,36 @@ def search_logs():
 #   POST /api/cve-search
 #   Multi-keyword OR search (security logs only)
 # =========================================================
-@cve_bp.post("/api/cve-search")
-def cve_search():
-    data = request.get_json(silent=True) or {}
-    keywords = data.get("keywords", [])
+# @cve_bp.post("/api/cve-search")
+# def cve_search():
+#     data = request.get_json(silent=True) or {}
+#     keywords = data.get("keywords", [])
 
-    if not keywords or not isinstance(keywords, list):
-        return jsonify({"error": "Provide 'keywords' as a non-empty list"}), 400
+#     if not keywords or not isinstance(keywords, list):
+#         return jsonify({"error": "Provide 'keywords' as a non-empty list"}), 400
 
-    cleaned = [k.strip() for k in keywords if k.strip()]
-    if not cleaned:
-        return jsonify({"error": "No valid keywords"}), 400
+#     cleaned = [k.strip() for k in keywords if k.strip()]
+#     if not cleaned:
+#         return jsonify({"error": "No valid keywords"}), 400
 
-    fts_query = " OR ".join(cleaned)
-    db = get_db()
+#     fts_query = " OR ".join(cleaned)
+#     db = get_db()
 
-    rows = db.execute(
-        """
-        SELECT rowid, *
-        FROM security_logs_fts
-        WHERE security_logs_fts MATCH ?
-        LIMIT 200
-        """,
-        (fts_query,)
-    ).fetchall()
+#     rows = db.execute(
+#         """
+#         SELECT rowid, *
+#         FROM security_logs_fts
+#         WHERE security_logs_fts MATCH ?
+#         LIMIT 200
+#         """,
+#         (fts_query,)
+#     ).fetchall()
 
-    return jsonify({
-        "query": fts_query,
-        "count": len(rows),
-        "results": [dict(r) for r in rows]
-    })
+#     return jsonify({
+#         "query": fts_query,
+#         "count": len(rows),
+#         "results": [dict(r) for r in rows]
+#     })
 
 
 # =========================================================
@@ -233,6 +233,7 @@ def cve_search():
 @search_bp.get("/api/search-multi")
 def search_multi():
     keyword = request.args.get("q", "").strip()
+    hostname = request.args.get("hostname", "").strip()
     limit = int(request.args.get("limit", 200))
 
     if not keyword:
@@ -265,9 +266,14 @@ def search_multi():
             continue
 
         placeholders = ",".join("?" for _ in rowids)
-        sql = f"SELECT * FROM {table} WHERE id IN ({placeholders}) ORDER BY timestamp DESC"
-        full_rows = db.execute(sql, rowids).fetchall()
+        
+        if hostname:
+            sql = f"SELECT * FROM {table} WHERE id IN ({placeholders}) AND hostname = ? ORDER BY timestamp DESC"
+            full_rows = db.execute(sql, (*rowids, hostname)).fetchall()
+        else:
+            sql = f"SELECT * FROM {table} WHERE id IN ({placeholders}) ORDER BY timestamp DESC"
+            full_rows = db.execute(sql, rowids).fetchall()
 
         results[key] = [dict(r) for r in full_rows]
 
-    return jsonify({"query": keyword, "results": results})
+    return jsonify({"query": keyword, "hostname": hostname or None, "results": results})

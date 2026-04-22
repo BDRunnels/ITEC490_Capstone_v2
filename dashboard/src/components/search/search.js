@@ -15,8 +15,11 @@ export async function searchTable(table, query, hostname = null, limit = 200, of
 // -----------------------------
 // Multi-table search
 // -----------------------------
-export async function searchAll(query, limit = 200) {
-    const url = `${API}/search-multi?q=${encodeURIComponent(query)}&limit=${limit}`;
+export async function searchAll(query, hostname = null, limit = 200) {
+    let url = `${API}/search-multi?q=${encodeURIComponent(query)}&limit=${limit}`;
+    if (hostname) {
+        url += `&hostname=${encodeURIComponent(hostname)}`;
+    }
     const res = await fetch(url);
     return res.json();
 }

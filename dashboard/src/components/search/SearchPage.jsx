@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { HostContext } from "../../context/HostContext";
 import { MDBAccordion, MDBAccordionItem, MDBBtn, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import {
@@ -9,9 +10,10 @@ import {
 
 export default function SearchPage() {
     const { currentHost, theme } = useContext(HostContext);
+    const location = useLocation();
     
-    const [query, setQuery] = useState("");
-    const [table, setTable] = useState("security");
+    const [query, setQuery] = useState(location.state?.searchQuery || "");
+    const [table, setTable] = useState(location.state?.searchTable || "security");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(null);
@@ -39,20 +41,46 @@ export default function SearchPage() {
         setError("");
         setLoading(true);
 
-        searchTable(table, query, currentHost || null)
-            .then(data => {
-                if (data.results) {
-                    setResults(data.results);
-                } else {
-                    setError(data.error || "Search failed");
+        if (table === "all") {
+            searchAll(query, currentHost || null)
+                .then(data => {
+                    if (data.results) {
+                        let flattened = [];
+                        for (const [t, rows] of Object.entries(data.results)) {
+                            rows.forEach(r => {
+                                r._sourceTable = t;
+                                flattened.push(r);
+                            });
+                        }
+                        // Sort globally by timestamp descending
+                        flattened.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        setResults(flattened);
+                    } else {
+                        setError(data.error || "Search failed");
+                        setResults([]);
+                    }
+                })
+                .catch(err => {
+                    setError(`Error: ${err.message}`);
                     setResults([]);
-                }
-            })
-            .catch(err => {
-                setError(`Error: ${err.message}`);
-                setResults([]);
-            })
-            .finally(() => setLoading(false));
+                })
+                .finally(() => setLoading(false));
+        } else {
+            searchTable(table, query, currentHost || null)
+                .then(data => {
+                    if (data.results) {
+                        setResults(data.results);
+                    } else {
+                        setError(data.error || "Search failed");
+                        setResults([]);
+                    }
+                })
+                .catch(err => {
+                    setError(`Error: ${err.message}`);
+                    setResults([]);
+                })
+                .finally(() => setLoading(false));
+        }
 
     }, [query, table, currentHost]);
 
@@ -223,6 +251,7 @@ export default function SearchPage() {
                             onChange={e => setTable(e.target.value)}
                             style={{ maxWidth: '150px' }}
                         >
+                            <option value="all">All Logs</option>
                             <option value="security">Security</option>
                             <option value="system">System</option>
                             <option value="defender">Defender</option>

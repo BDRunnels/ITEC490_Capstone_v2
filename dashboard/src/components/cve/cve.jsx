@@ -1,7 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { HostContext } from "../../context/HostContext";
+import { searchAll } from "../search/search";
 import { MDBBtn } from 'mdb-react-ui-kit';
 
 const CVE = () => {
+  const { currentHost } = useContext(HostContext);
+  const navigate = useNavigate();
+
   const [cveData, setCveData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,15 +17,39 @@ const CVE = () => {
   const [activeSearch, setActiveSearch] = useState("");
   const itemsPerPage = 8;
 
-  const getInitialDates = () => {
-    const end = new Date();
-    const start = new Date();
-    start.setDate(end.getDate() - 119); // 119 days to ensure it's fully within 120 limit
-    return {
-      start: start.toISOString().split("T")[0],
-      end: end.toISOString().split("T")[0]
-    };
+  // Cross-component log search state
+  const [crossSearchInput, setCrossSearchInput] = useState("");
+  const [crossSearchLoading, setCrossSearchLoading] = useState(false);
+  const [crossSearchResults, setCrossSearchResults] = useState(null);
+
+  const handleCrossSearch = async (e) => {
+      e.preventDefault();
+      if (!crossSearchInput) return;
+      setCrossSearchLoading(true);
+      setCrossSearchResults(null);
+      try {
+          const data = await searchAll(crossSearchInput, currentHost);
+          let totalCount = 0;
+          if (data.results) {
+              Object.values(data.results).forEach(arr => totalCount += arr.length);
+          }
+          setCrossSearchResults({ count: totalCount, query: crossSearchInput });
+      } catch (err) {
+          console.error(err);
+      } finally {
+          setCrossSearchLoading(false);
+      }
   };
+// Used for date range in CVE search - disabled for now to fetch 2000 (maximum)
+  // const getInitialDates = () => {
+  //   const end = new Date();
+  //   const start = new Date();
+  //   start.setDate(end.getDate() - 119); // 119 days to ensure it's fully within 120 limit
+  //   return {
+  //     start: start.toISOString().split("T")[0],
+  //     end: end.toISOString().split("T")[0]
+  //   };
+  // };
 
   useEffect(() => {
     const fetchCVEs = async () => {
@@ -97,6 +127,34 @@ const CVE = () => {
 
   return (
     <div style={{ marginTop: '20px' }}>
+      {/* Cross-Component Log Search */}
+      <div className="container mb-4" style={{ maxWidth: '800px' }}>
+         <form onSubmit={handleCrossSearch} className="d-flex shadow-sm rounded">
+              <input
+                type="text"
+                className="form-control me-2"
+                placeholder="Search all SIEM logs (or selected VM) for a keyword..."
+                value={crossSearchInput}
+                onChange={(e) => setCrossSearchInput(e.target.value)}
+              />
+              <MDBBtn type="submit" color="primary" disabled={crossSearchLoading}>
+                {crossSearchLoading ? "Searching..." : "Search Logs"}
+              </MDBBtn>
+         </form>
+         {crossSearchResults && (
+             <div className={`alert ${crossSearchResults.count > 0 ? 'alert-success' : 'alert-warning'} mt-3 mb-0 d-flex justify-content-between align-items-center shadow-sm`}>
+                 <span>
+                    <strong>{crossSearchResults.count}</strong> results found for "{crossSearchResults.query}"
+                 </span>
+                 {crossSearchResults.count > 0 && (
+                     <MDBBtn size="sm" color="success" onClick={() => navigate('/search', { state: { searchQuery: crossSearchResults.query, searchTable: 'all' } })}>
+                         Click here to view logs
+                     </MDBBtn>
+                 )}
+             </div>
+         )}
+      </div>
+
       <h1 className="text-center mb-4">
           Latest CVEs from NVD (National Vulnerability Database)
         </h1>
