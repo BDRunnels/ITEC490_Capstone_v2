@@ -277,7 +277,7 @@ const Admin = () => {
                     <div className="p-4 h-100 rounded border border-info" style={{ backgroundColor: theme === 'dark-mode' ? "#2b2b3c" : "#fff" }}>
                       <h5><i className="fas fa-flask text-info me-2"></i> Testing </h5>
                       <p className={`small mb-4 ${theme === 'light-mode' ? 'text-muted' : 'text-secondary'}`}>Populate the database with mock VM data.</p>
-                      
+                      <br/>
                       <div className="d-grid gap-3 mt-auto">
                          <MDBBtn onClick={() => handleSeedAction("/api/seed", "seed data", setIsSeeding)}  color="info" className="hover-shadow" disabled={isSeeding}>
                            {isSeeding ? 'Injecting...' : <><i className="fas fa-syringe me-2"></i> Inject Dummy Data</>}

@@ -353,19 +353,43 @@ export default function SearchPage() {
                             <MDBBtn className="btn-close btn-close-white" color="none" onClick={() => setSelected(null)}></MDBBtn>
                         </div>
 
-                        <pre
+                        <div
                             className="rounded p-3"
                             style={{
                                 backgroundColor: theme === 'dark-mode' ? "#2b2b3c" : "#f7f7f7",
                                 color: theme === 'dark-mode' ? "#e0e0e0" : "#333",
-                                whiteSpace: "pre-wrap",
-                                fontSize: "12px",
+                                fontSize: "14px",
                                 maxHeight: "55vh",
                                 overflowY: "auto"
                             }}
                         >
-{JSON.stringify(selected, null, 2)}
-                        </pre>
+                            <table className="table table-sm table-borderless mb-0" style={{ color: "inherit" }}>
+                                <tbody>
+                                    {Object.entries(selected).map(([key, value]) => {
+                                        if (key === "_sourceTable") return null;
+                                        
+                                        let displayValue = value;
+                                        if (typeof value === 'string') {
+                                            // Convert explicit \r\n or \n string literals to actual newlines
+                                            displayValue = value.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+                                            // Remove leading spaces (but preserve tabs) to fix Windows Event Log global padding
+                                            displayValue = displayValue.replace(/^ +/gm, '');
+                                        }
+
+                                        return (
+                                            <tr key={key} className="border-bottom border-secondary border-opacity-10">
+                                                <th scope="row" className="text-uppercase py-2" style={{ width: "25%", whiteSpace: "nowrap", opacity: 0.8 }}>
+                                                    {key.replace(/_/g, ' ')}
+                                                </th>
+                                                <td className="py-2" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", fontFamily: "monospace" }}>
+                                                    {displayValue !== null ? String(displayValue) : <em className="opacity-50">null</em>}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
 
                         <div className="text-end mt-3">
                             <MDBBtn color="secondary" onClick={() => setSelected(null)}>

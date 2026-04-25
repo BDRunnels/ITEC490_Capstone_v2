@@ -339,7 +339,7 @@ const Computers = () => {
                                         return;
                                     }
                                     
-                                    const killCmd = "Remove-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -Name 'SIEMAgent' -ErrorAction SilentlyContinue; Get-Process powershell -ErrorAction SilentlyContinue | Where-Object { (Get-CimInstance Win32_Process -Filter \\\"ProcessId=$($_.Id)\\\").CommandLine -match \\\"siem-agent.ps1\\\" } | Stop-Process -Force";
+                                    const killCmd = "schtasks.exe /Delete /TN SIEMAgent /F | Out-Null; Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object { try { $cmdLine = (Get-CimInstance Win32Process -Filter 'ProcessId=$($.Id)').CommandLine; if ($cmdLine -match 'siem-agent.ps1') { Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue } } catch {} }"
                                     try {
                                         await fetch(`${apiBase}/api/commands`, {
                                             method: "POST",
