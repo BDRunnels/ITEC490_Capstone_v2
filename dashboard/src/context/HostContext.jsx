@@ -13,7 +13,7 @@ export const HostProvider = ({ children }) => {
 
   const login = async (user, pass) => {
     try {
-      const res = await fetch(`http://${window.location.hostname}:5001/api/login`, {
+      const res = await fetch(`http://${window.location.hostname}:5000/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: user.trim().toLowerCase(), password: pass }),
