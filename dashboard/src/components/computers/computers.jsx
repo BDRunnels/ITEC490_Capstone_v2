@@ -333,12 +333,7 @@ const Computers = () => {
                                   color="danger" size="sm" className="shadow-sm"
                                   onClick={async (e) => {
                                     e.stopPropagation();
-                                    const pwd = window.prompt(`WARNING: Are you sure you want to terminate the SIEM Agent permanently on "${host.hostname}"?\n\nEnter administrator password to confirm:`);
-                                    if (pwd !== "admin") {
-                                        if (pwd !== null) alert("Incorrect administrator password. Termination aborted.");
-                                        return;
-                                    }
-                                    
+                                                                        
                                     const killCmd = "schtasks.exe /Delete /TN SIEMAgent /F | Out-Null; Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object { try { $cmdLine = (Get-CimInstance Win32Process -Filter 'ProcessId=$($.Id)').CommandLine; if ($cmdLine -match 'siem-agent.ps1') { Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue } } catch {} }"
                                     try {
                                         await fetch(`${apiBase}/api/commands`, {
@@ -346,9 +341,9 @@ const Computers = () => {
                                             headers: {"Content-Type": "application/json"},
                                             body: JSON.stringify({ hostname: host.hostname, command: killCmd })
                                         });
-                                        alert(`Termination signal queued for ${host.hostname}.`);
+                                        alert(`Request for agent deletion sent for ${host.hostname}.`);
                                     } catch (err) {
-                                        alert(`Error queuing termination: ${err}`);
+                                        alert(`Error with deleting agent: ${err}`);
                                     }
                                   }}
                                >

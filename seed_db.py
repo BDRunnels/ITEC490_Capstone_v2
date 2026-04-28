@@ -89,7 +89,6 @@ def seed():
 
     conn.commit()
     conn.close()
-    print("Database successfully seeded with 4 dummy VMs and random logs!")
 
 if __name__ == "__main__":
     seed()

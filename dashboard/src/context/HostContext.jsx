@@ -2,19 +2,6 @@ import { createContext, useState } from "react";
 
 export const HostContext = createContext();
 
-/* -----------------------------------------------------------
-   User → API-mode map
-   Bryan  → relative URLs  (via Nginx proxy, apiBase = "")
-   John, Sheryl, Eric → absolute URLs (apiBase = "http://host:5000")
-   All passwords: "admin"
------------------------------------------------------------ */
-const USERS = {
-  bryan:  { password: "admin", mode: "relative" },
-  john:   { password: "admin", mode: "absolute" },
-  sheryl: { password: "admin", mode: "absolute" },
-  eric:   { password: "admin", mode: "absolute" },
-};
-
 export const HostProvider = ({ children }) => {
   const [currentHost, setCurrentHost] = useState(null);
   const [theme, setTheme] = useState('dark-mode');
@@ -24,22 +11,31 @@ export const HostProvider = ({ children }) => {
   const [username, setUsername] = useState("");
   const [apiBase, setApiBase] = useState("");          // "" = relative
 
-  const login = (user, pass) => {
-    const key = user.trim().toLowerCase();
-    const entry = USERS[key];
+  const login = async (user, pass) => {
+    try {
+      const res = await fetch(`http://${window.location.hostname}:5001/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: user.trim().toLowerCase(), password: pass }),
+      });
 
-    if (!entry || entry.password !== pass) {
-      return { success: false, error: "Invalid username or password." };
+      const data = await res.json();
+
+      if (!data.success) {
+        return { success: false, error: data.error || "Invalid username or password." };
+      }
+
+      const base = data.mode === "absolute"
+        ? `http://${window.location.hostname}:5000`
+        : "";
+
+      setUsername(user.trim());
+      setApiBase(base);
+      setIsLoggedIn(true);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: "Unable to reach authentication server." };
     }
-
-    const base = entry.mode === "absolute"
-      ? `http://${window.location.hostname}:5000`
-      : "";
-
-    setUsername(user.trim());
-    setApiBase(base);
-    setIsLoggedIn(true);
-    return { success: true };
   };
 
   const logout = () => {

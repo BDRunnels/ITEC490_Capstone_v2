@@ -3,7 +3,7 @@ services:
     build: ./api
     container_name: siem_api_2
     ports:
-      - "5001:5000"          # Optional: expose for direct debugging
+      - "${API_PORT:-5000}:5000"          # Optional: expose for direct debugging
     volumes:
       - ./data:/data
     networks:

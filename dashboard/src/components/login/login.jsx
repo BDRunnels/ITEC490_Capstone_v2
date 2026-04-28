@@ -8,10 +8,10 @@ const Login = () => {
   const [pass, setPass] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const result = login(user, pass);
+    const result = await login(user, pass);
     if (!result.success) {
       setError(result.error);
     }
